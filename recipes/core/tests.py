@@ -802,7 +802,7 @@ class RecipeViewSetSetTestCase(TestCase, BaseAPITestCaseMixin):
             serves=4,
             preparation="prep",
             preparation_time_in_minutes=15,
-            author=self.user
+            author=self.user,
         )
 
         self.post_data = {
@@ -878,7 +878,12 @@ class RecipeViewSetSetTestCase(TestCase, BaseAPITestCaseMixin):
         self.assertEqual(str(stored.id), result.get("id"))
         self.assertEqual(stored.name, result.get("name"))
         self.assertEqual(stored.serves, result.get("serves"))
-        self.assertEqual(stored.preparation_time_in_minutes, result.get("preparation_time_in_minutes"))
+        self.assertEqual(
+            stored.preparation_time_in_minutes,
+            result.get("preparation_time_in_minutes"),
+        )
         self.assertEqual(stored.preparation, result.get("preparation"))
         self.assertEqual(stored.author.id, result.get("author").get("id"))
-        self.assertEqual(stored.ingredients.all().count(), len(result.get("ingredients")))
+        self.assertEqual(
+            stored.ingredients.all().count(), len(result.get("ingredients"))
+        )

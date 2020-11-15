@@ -9,7 +9,9 @@ from django.db.models import (
     PositiveIntegerField,
     ForeignKey,
     PROTECT,
-    FloatField, TextField,
+    FloatField,
+    TextField,
+    ManyToManyField,
 )
 
 User = get_user_model()
@@ -31,6 +33,7 @@ class Recipe(BaseModel):
         null=False, blank=False, db_index=True
     )
     preparation = TextField(null=False, blank=False)
+    ingredients = ManyToManyField("core.RecipeIngredient")
     author = ForeignKey(User, null=False, blank=False, on_delete=PROTECT)
 
     class Meta:
@@ -40,7 +43,9 @@ class Recipe(BaseModel):
 
 
 class Ingredient(BaseModel):
-    name = CharField(max_length=255, null=False, blank=False, db_index=True)
+    name = CharField(
+        max_length=255, null=False, blank=False, db_index=True, unique=True
+    )
 
     class Meta:
         verbose_name = "Ingredient"
@@ -49,7 +54,12 @@ class Ingredient(BaseModel):
 
 
 class Unit(BaseModel):
-    name = CharField(max_length=255, null=False, blank=False, db_index=True)
+    name = CharField(
+        max_length=255, null=False, blank=False, db_index=True, unique=True
+    )
+    abbreviation = CharField(
+        max_length=10, null=False, blank=False, db_index=True, unique=True
+    )
 
     class Meta:
         verbose_name = "Unit"
@@ -58,14 +68,11 @@ class Unit(BaseModel):
 
 
 class RecipeIngredient(BaseModel):
-    recipe = ForeignKey(
-        "core.Recipe", null=False, blank=False, on_delete=PROTECT
-    )
     ingredient = ForeignKey(
         "core.Ingredient", null=False, blank=False, on_delete=PROTECT
     )
     quantity = FloatField(null=False, blank=False)
-    unity = ForeignKey("core.Unit", null=False, blank=False, on_delete=PROTECT)
+    unit = ForeignKey("core.Unit", null=False, blank=False, on_delete=PROTECT)
 
     class Meta:
         verbose_name = "Recipe Ingredient"
